@@ -26,9 +26,11 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 61616
+    - name: amq-port  # Nom du port pour 61616
+      port: 61616
       targetPort: 61616
-    - port: 8161
+    - name: web-port  # Nom du port pour 8161
+      port: 8161
       targetPort: 8161
   selector:
     app: fleetman-queue
