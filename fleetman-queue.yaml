@@ -26,10 +26,10 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - name: amq-port  # Nom du port pour 61616
+    - name: amqp  # Nom du port pour 61616
       port: 61616
       targetPort: 61616
-    - name: web-port  # Nom du port pour 8161
+    - name: web-console  # Nom du port pour 8161
       port: 8161
       targetPort: 8161
   selector:
