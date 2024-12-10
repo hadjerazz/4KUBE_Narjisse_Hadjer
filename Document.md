@@ -99,6 +99,10 @@ kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/
 ```
 ### 5. Connexion à GitHub 
 Installer Git, puis cloner le dépôt de notre projet à l'aide de la commande git clone. Cela permettra de déployer notre cluster sur le nœud principal k8s-master.
+
+```bash
+git clone https://github.com/hadjerazz/4KUBE_Narjisse_Hadjer.git
+```
 ### Preuve de déployment:
 * Le statut des nœuds et les pods déployés sur chacun d'eux :
 
