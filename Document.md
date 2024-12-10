@@ -1,18 +1,44 @@
 # 4KUBE: Déploiement d'une Application Distribuée sur Kubernetes
 
 ## Contexte
-Ce projet consiste à déployer une application distribuée permettant de suivre en temps réel une flotte de véhicules effectuant des livraisons
+Ce projet consiste à déployer une application  distribuée en local  et sur un Cluster Kubernetes  permettant de suivre en temps réel une flotte de véhicules effectuant des livraisons
 
 ## Pré-requis
-- Trois machines virtuelles avec les adresses IP définies :
-  - **Nœud master** : `192.168.249.129`
-  - **Nœuds worker** : `192.168.249.131` et `192.168.249.133`
-- **Système d'exploitation** : Debian.
-- VMware pour gérer les machines virtuelles.
+   **Déployer l'application en local:**
+   * Système d'exploitation: **Windows ou autres**
+   * Outils nécessaires: Docker
+
+   **Sur un Cluster Kubernetes:**
+   * Système d'exploitation: **Debian**
+   * Outils nécessaires: Kubeadm,Kubectl,Kubelet,Containerd
+   * Trois machines virtuelles avec les adresses IP définies :
+        
+        Nœud master : `192.168.249.129`
+
+        Nœuds worker : `192.168.249.131` et `192.168.249.133`
+   
+   * VMware pour gérer les machines virtuelles.
 
 ---
+## Création des manifestes Kubernetes ##
+Création de fichiers YAML pour déployer l'application:
+ * fleetman-api-gateway.yaml
+ * fleetman-mongodb.yaml
+ * fleetman-position-simulator.yaml
+ * fleetman-position-tracker.yaml
+ * fleetman-queue.yaml
+ * fleetman-webapp.yaml
 
-## Étapes de configuration
+-Tous ces fichiers contiennent des deployments et services.
+
+-Le fichier `fleetman-mongodb.yaml` contient de plus un pv et pvc.
+
+## Accès à l'application en local : ##
+Après avoir appliquer les déployments et vérifier les status de pods créés, on peut accéder à l'application via cette adresse:
+   http://localhost:30080
+
+---
+## Étapes de configuration du Cluster Kubernetes ##
 
 ### 1. Mise en place du cluster Kubernetes
 #### Désactivation du swap
@@ -34,6 +60,14 @@ Ajout des lignes suivantes sur chaque machine, pour établir la communication en
 #### Installation de Containerd
  Containerd est un runtime de conteneurs qui exécute les conteneurs dans Kubernetes.
 ```bash
+$ cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
+overlay
+br_netfilter
+EOF
+
+$ sudo modprobe overlay
+$ sudo modprobe br_netfilter
+
 sudo apt update
 sudo apt -y install containerd
 containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
@@ -103,6 +137,15 @@ Installer Git, puis cloner le dépôt de notre projet à l'aide de la commande g
 ```bash
 git clone https://github.com/hadjerazz/4KUBE_Narjisse_Hadjer.git
 ```
+## Accès à l'application sur le Cluster : ##
+Après avoir appliquer les déployments et vérifier les status de pods créés, on peut accéder à l'application via cette adresse:
+   http://192.168.249.129:30080/
+
+**Remarque**: 192.168.249.129 est l'adresse du noeud master récupérée par la VM en executant la commande: 
+```bash
+ip a
+```
+
 ### Preuve de déployment:
 * Le statut des nœuds et les pods déployés sur chacun d'eux :
 
@@ -114,4 +157,8 @@ git clone https://github.com/hadjerazz/4KUBE_Narjisse_Hadjer.git
 ![alt text](<Capture d'écran 2024-12-10 100420.png>)
 
 
-
+## Sources ##
+* https://gitlab.agglo-lepuyenvelay.fr/-/snippets/1036 : Lien vers le tutoriel utilisé pour la création du cluster Kubernetes, avec des modifications faites pour l'installation de containerd ( changement de package et installation de qemu pour que les images soient compatibles, avec cette commande):
+```bash
+apt-get install qemu-system qemu-user  qemu-user-static
+```
